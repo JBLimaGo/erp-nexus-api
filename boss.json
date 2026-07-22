@@ -1,0 +1,11 @@
+{
+	"name": "ERP-Nexus-API",
+	"description": "API REST para sistemas ERP desenvolvidos com Delphi, Horse e Firebird",
+	"version": "1.0.0",
+	"homepage": "https://github.com/JBLimaGo/erp-nexus-api",
+	"mainsrc": "./src",
+	"projects": [],
+	"dependencies": {
+		"github.com/hashload/horse": "^3.2.0"
+	}
+}

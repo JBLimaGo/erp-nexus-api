@@ -31,3 +31,6 @@ Release/
 
 # Environment/configuration secrets
 .env
+
+# Boss downloaded dependencies
+modules/
