@@ -6,30 +6,26 @@ program ERPNexusAPI;
 
 uses
   System.SysUtils,
-  System.JSON,
   Horse,
+  AppConfig in 'Config\AppConfig.pas',
+  AppRoutes in 'Api\Routes\AppRoutes.pas',
   HealthRoutes in 'Api\Routes\HealthRoutes.pas';
 
 begin
-  THorse.Get('/',
-    procedure(Req: THorseRequest; Res: THorseResponse)
-    begin
-      Res.Send('ERP Nexus API');
-    end
-  );
-
-  RegisterHealthRoutes;
+  RegisterRoutes;
 
   Writeln('====================================');
-  Writeln('        ERP NEXUS API');
+  Writeln('        ', TAppConfig.APP_NAME);
   Writeln('====================================');
   Writeln;
-  Writeln('Servidor iniciado na porta 9000');
-  Writeln('Acesse: http://localhost:9000');
+  Writeln('Versao: ', TAppConfig.APP_VERSION);
+  Writeln('Porta:  ', TAppConfig.Port);
+  Writeln;
+  Writeln('API:    http://localhost:', TAppConfig.Port);
+  Writeln('Health: http://localhost:', TAppConfig.Port, '/health');
   Writeln;
   Writeln('Pressione CTRL+C para encerrar.');
   Writeln;
 
-  THorse.Listen(9000);
-
+  THorse.Listen(TAppConfig.Port);
 end.

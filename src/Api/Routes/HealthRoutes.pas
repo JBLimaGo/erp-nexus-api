@@ -8,7 +8,8 @@ implementation
 
 uses
   System.JSON,
-  Horse;
+  Horse,
+  AppConfig;
 
 procedure RegisterHealthRoutes;
 begin
@@ -20,8 +21,8 @@ begin
       LJSON := TJSONObject.Create;
       try
         LJSON.AddPair('status', 'online');
-        LJSON.AddPair('service', 'ERP Nexus API');
-        LJSON.AddPair('version', '1.0.0');
+        LJSON.AddPair('service', TAppConfig.APP_NAME);
+        LJSON.AddPair('version', TAppConfig.APP_VERSION);
 
         Res
           .Status(200)

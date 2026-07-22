@@ -145,6 +145,8 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
+        <DCCReference Include="Config\AppConfig.pas"/>
+        <DCCReference Include="Api\Routes\AppRoutes.pas"/>
         <DCCReference Include="Api\Routes\HealthRoutes.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
