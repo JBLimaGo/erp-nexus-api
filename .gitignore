@@ -1,0 +1,33 @@
+# Delphi compiled files
+*.dcu
+*.exe
+*.dll
+*.bpl
+*.dcp
+
+# Delphi local/user files
+*.local
+*.identcache
+*.projdata
+*.tvsconfig
+
+# Delphi history
+__history/
+__recovery/
+
+# Build directories
+Win32/
+Win64/
+Debug/
+Release/
+
+# Temporary files
+*.~*
+*.tmp
+*.bak
+
+# IDE
+.dproj.local
+
+# Environment/configuration secrets
+.env
