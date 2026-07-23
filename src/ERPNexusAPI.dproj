@@ -149,6 +149,14 @@
         <DCCReference Include="Config\AppConfig.pas"/>
         <DCCReference Include="Api\Routes\AppRoutes.pas"/>
         <DCCReference Include="Api\Routes\HealthRoutes.pas"/>
+        <DCCReference Include="Api\Routes\CustomerRoutes.pas"/>
+        <DCCReference Include="Api\Controllers\CustomerController.pas"/>
+        <DCCReference Include="Domain\Models\Customer.pas"/>
+        <DCCReference Include="Api\DTOs\CustomerDTO.pas"/>
+        <DCCReference Include="Domain\Services\CustomerService.pas"/>
+        <DCCReference Include="Domain\Repositories\CustomerRepository.pas"/>
+        <DCCReference Include="Infrastructure\Repositories\MemoryCustomerRepository.pas"/>
+        <DCCReference Include="Config\AppContainer.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

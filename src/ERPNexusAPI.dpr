@@ -9,7 +9,15 @@ uses
   Horse,
   AppConfig in 'Config\AppConfig.pas',
   AppRoutes in 'Api\Routes\AppRoutes.pas',
-  HealthRoutes in 'Api\Routes\HealthRoutes.pas';
+  HealthRoutes in 'Api\Routes\HealthRoutes.pas',
+  CustomerRoutes in 'Api\Routes\CustomerRoutes.pas',
+  CustomerController in 'Api\Controllers\CustomerController.pas',
+  Customer in 'Domain\Models\Customer.pas',
+  CustomerDTO in 'Api\DTOs\CustomerDTO.pas',
+  CustomerService in 'Domain\Services\CustomerService.pas',
+  CustomerRepository in 'Domain\Repositories\CustomerRepository.pas',
+  MemoryCustomerRepository in 'Infrastructure\Repositories\MemoryCustomerRepository.pas',
+  AppContainer in 'Config\AppContainer.pas';
 
 begin
   RegisterRoutes;

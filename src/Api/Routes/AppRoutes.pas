@@ -9,7 +9,8 @@ implementation
 uses
   Horse,
   AppConfig,
-  HealthRoutes;
+  HealthRoutes,
+  CustomerRoutes;
 
 procedure RegisterRoutes;
 begin
@@ -21,6 +22,7 @@ begin
   );
 
   RegisterHealthRoutes;
+  RegisterCustomerRoutes;
 end;
 
 end.
