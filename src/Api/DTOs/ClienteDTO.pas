@@ -1,23 +1,22 @@
 {
-  modelo do domínio
+
+   dados de entrada
+
 }
 
-unit Customer;
+unit ClienteDTO;
 
 interface
 
 type
-  TCustomer = class
+  TCreateClienteDTO = class
   private
-    FId: Integer;
     FName: string;
     FDocument: string;
     FEmail: string;
     FActive: Boolean;
   public
-    property Id: Integer
-      read FId
-      write FId;
+    constructor Create;
 
     property Name: string
       read FName
@@ -37,5 +36,12 @@ type
   end;
 
 implementation
+
+constructor TCreateClienteDTO.Create;
+begin
+  inherited Create;
+
+  FActive := True;
+end;
 
 end.

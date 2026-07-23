@@ -10,7 +10,7 @@ uses
   Horse,
   AppConfig,
   HealthRoutes,
-  CustomerRoutes;
+  ClienteRoutes;
 
 procedure RegisterRoutes;
 begin
@@ -22,7 +22,7 @@ begin
   );
 
   RegisterHealthRoutes;
-  RegisterCustomerRoutes;
+  RegisterClienteRoutes;
 end;
 
 end.

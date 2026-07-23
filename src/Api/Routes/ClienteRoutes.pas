@@ -4,50 +4,50 @@
 
 }
 
-unit CustomerRoutes;
+unit ClienteRoutes;
 
 interface
 
-procedure RegisterCustomerRoutes;
+procedure RegisterClienteRoutes;
 
 implementation
 
 uses
   Horse,
-  CustomerController;
+  ClienteController;
 
-procedure RegisterCustomerRoutes;
+procedure RegisterClienteRoutes;
 begin
   THorse.Get(
-    '/api/v1/customers',
+    '/api/v1/clientes',
     procedure(
       Req: THorseRequest;
       Res: THorseResponse
     )
     begin
-      TCustomerController.List(Req, Res);
+      TClienteController.List(Req, Res);
     end
   );
 
    THorse.Get(
-    '/api/v1/customers/:id',
+    '/api/v1/clientes/:id',
     procedure(
       Req: THorseRequest;
       Res: THorseResponse
     )
     begin
-      TCustomerController.FindById(Req, Res);
+      TClienteController.FindById(Req, Res);
     end
   );
 
   THorse.Post(
-    '/api/v1/customers',
+    '/api/v1/clientes',
     procedure(
       Req: THorseRequest;
       Res: THorseResponse
     )
     begin
-      TCustomerController.CreateCustomer(
+      TClienteController.CreateCliente(
         Req,
         Res
       );

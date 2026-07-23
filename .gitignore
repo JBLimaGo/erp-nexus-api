@@ -34,3 +34,7 @@ Release/
 
 # Boss downloaded dependencies
 modules/
+
+# Firebird databases
+*.fdb
+*.FDB

@@ -6,33 +6,28 @@ unit AppContainer;
 interface
 
 uses
-  CustomerService;
+  ClienteService;
 
 type
   TAppContainer = class
   public
-    class function CreateCustomerService:
-      TCustomerService;
+    class function CreateClienteService:
+      TClienteService;
   end;
 
 implementation
 
 uses
-  CustomerRepository,
-  MemoryCustomerRepository;
+  ClienteRepository,
+  FireDACClienteRepository;
 
-class function TAppContainer.CreateCustomerService:
-  TCustomerService;
+class function TAppContainer.CreateClienteService: TClienteService;
 var
-  LRepository: ICustomerRepository;
+  LRepository: IClienteRepository;
 begin
-  LRepository :=
-    TMemoryCustomerRepository.Create;
+  LRepository := TFireDACClienteRepository.Create;
 
-  Result :=
-    TCustomerService.Create(
-      LRepository
-    );
+  Result      := TClienteService.Create(LRepository);
 end;
 
 end.

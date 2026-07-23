@@ -3,27 +3,31 @@
 
 }
 
-unit CustomerRepository;
+unit ClienteRepository;
 
 interface
 
 uses
   System.Generics.Collections,
-  Customer;
+  Cliente;
 
 type
-  ICustomerRepository = interface
+  IClienteRepository = interface
     ['{C1526807-4A62-4C55-9557-A7C27E97AA01}']
 
-    function FindAll: TObjectList<TCustomer>;
+    function FindAll: TObjectList<TCliente>;
 
     function FindById(
       AId: Integer
-    ): TCustomer;
+    ): TCliente;
+
+    function ExistsByDocument(
+      const ADocument: string
+    ): Boolean;
 
     function Add(
-      ACustomer: TCustomer
-    ): TCustomer;
+      ACliente: TCliente
+    ): TCliente;
   end;
 
 implementation

@@ -149,14 +149,18 @@
         <DCCReference Include="Config\AppConfig.pas"/>
         <DCCReference Include="Api\Routes\AppRoutes.pas"/>
         <DCCReference Include="Api\Routes\HealthRoutes.pas"/>
-        <DCCReference Include="Api\Routes\CustomerRoutes.pas"/>
-        <DCCReference Include="Api\Controllers\CustomerController.pas"/>
-        <DCCReference Include="Domain\Models\Customer.pas"/>
-        <DCCReference Include="Api\DTOs\CustomerDTO.pas"/>
-        <DCCReference Include="Domain\Services\CustomerService.pas"/>
-        <DCCReference Include="Domain\Repositories\CustomerRepository.pas"/>
-        <DCCReference Include="Infrastructure\Repositories\MemoryCustomerRepository.pas"/>
+        <DCCReference Include="Api\Routes\ClienteRoutes.pas"/>
+        <DCCReference Include="Api\Controllers\ClienteController.pas"/>
+        <DCCReference Include="Domain\Models\Cliente.pas"/>
+        <DCCReference Include="Api\DTOs\ClienteDTO.pas"/>
+        <DCCReference Include="Domain\Services\ClienteService.pas"/>
+        <DCCReference Include="Domain\Repositories\ClienteRepository.pas"/>
+        <DCCReference Include="Infrastructure\Repositories\MemoryClienteRepository.pas"/>
         <DCCReference Include="Config\AppContainer.pas"/>
+        <DCCReference Include="Infrastructure\Database\DatabaseConnection.pas"/>
+        <DCCReference Include="Infrastructure\Repositories\FireDACClienteRepository.pas"/>
+        <DCCReference Include="Domain\Exceptions\DomainExceptions.pas"/>
+        <DCCReference Include="Api\Middlewares\ExceptionMiddleware.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

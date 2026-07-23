@@ -10,16 +10,22 @@ uses
   AppConfig in 'Config\AppConfig.pas',
   AppRoutes in 'Api\Routes\AppRoutes.pas',
   HealthRoutes in 'Api\Routes\HealthRoutes.pas',
-  CustomerRoutes in 'Api\Routes\CustomerRoutes.pas',
-  CustomerController in 'Api\Controllers\CustomerController.pas',
-  Customer in 'Domain\Models\Customer.pas',
-  CustomerDTO in 'Api\DTOs\CustomerDTO.pas',
-  CustomerService in 'Domain\Services\CustomerService.pas',
-  CustomerRepository in 'Domain\Repositories\CustomerRepository.pas',
-  MemoryCustomerRepository in 'Infrastructure\Repositories\MemoryCustomerRepository.pas',
-  AppContainer in 'Config\AppContainer.pas';
+  ClienteRoutes in 'Api\Routes\ClienteRoutes.pas',
+  ClienteController in 'Api\Controllers\ClienteController.pas',
+  Cliente in 'Domain\Models\Cliente.pas',
+  ClienteDTO in 'Api\DTOs\ClienteDTO.pas',
+  ClienteService in 'Domain\Services\ClienteService.pas',
+  ClienteRepository in 'Domain\Repositories\ClienteRepository.pas',
+  MemoryClienteRepository in 'Infrastructure\Repositories\MemoryClienteRepository.pas',
+  AppContainer in 'Config\AppContainer.pas',
+  DatabaseConnection in 'Infrastructure\Database\DatabaseConnection.pas',
+  FireDACClienteRepository in 'Infrastructure\Repositories\FireDACClienteRepository.pas',
+  DomainExceptions in 'Domain\Exceptions\DomainExceptions.pas',
+  ExceptionMiddleware in 'Api\Middlewares\ExceptionMiddleware.pas';
 
 begin
+
+  RegisterExceptionMiddleware;
   RegisterRoutes;
 
   Writeln('====================================');
