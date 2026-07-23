@@ -4,12 +4,16 @@
 *.dll
 *.bpl
 *.dcp
+*.map
+
 
 # Delphi local/user files
 *.local
 *.identcache
 *.projdata
 *.tvsconfig
+*.stat
+*.dres
 
 # Delphi history
 __history/
@@ -38,3 +42,8 @@ modules/
 # Firebird databases
 *.fdb
 *.FDB
+
+# Secrets / environment
+.env
+.env.*
+!.env.example
