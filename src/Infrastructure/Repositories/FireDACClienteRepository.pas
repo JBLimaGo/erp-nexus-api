@@ -36,9 +36,23 @@ type
       const ADocument: string
     ): Boolean;
 
+    function ExistsByDocumentExceptId(
+      const ADocument: string;
+      AId: Integer
+    ): Boolean;
+
     function Add(
       ACliente: TCliente
     ): TCliente;
+
+    function Update(
+      ACliente: TCliente
+    ): TCliente;
+
+    procedure Deactivate(
+      AId: Integer
+    );
+
   end;
 
 implementation
@@ -61,22 +75,20 @@ begin
 
   inherited;
 end;
-
+                                   // GET
 function TFireDACClienteRepository.FindAll:
   TObjectList<TCliente>;
 var
   LQuery: TFDQuery;
   LCliente: TCliente;
 begin
-  Result :=
-    TObjectList<TCliente>.Create(True);
+  Result := TObjectList<TCliente>.Create(True);
 
   LQuery := TFDQuery.Create(nil);
 
   try
     try
-      LQuery.Connection :=
-        FDatabase.Connection;
+      LQuery.Connection := FDatabase.Connection;
 
       LQuery.SQL.Text :=
         'SELECT ' +
@@ -94,20 +106,11 @@ begin
       begin
         LCliente := TCliente.Create;
 
-        LCliente.Id :=
-          LQuery.FieldByName('ID').AsInteger;
-
-        LCliente.Name :=
-          LQuery.FieldByName('NAME').AsString;
-
-        LCliente.Document :=
-          LQuery.FieldByName('DOCUMENT').AsString;
-
-        LCliente.Email :=
-          LQuery.FieldByName('EMAIL').AsString;
-
-        LCliente.Active :=
-          LQuery.FieldByName('ACTIVE').AsBoolean;
+        LCliente.Id       := LQuery.FieldByName('ID').AsInteger;
+        LCliente.Name     := LQuery.FieldByName('NAME').AsString;
+        LCliente.Document := LQuery.FieldByName('DOCUMENT').AsString;
+        LCliente.Email    := LQuery.FieldByName('EMAIL').AsString;
+        LCliente.Active   := LQuery.FieldByName('ACTIVE').AsBoolean;
 
         Result.Add(LCliente);
 
@@ -135,8 +138,7 @@ begin
   LQuery := TFDQuery.Create(nil);
 
   try
-    LQuery.Connection :=
-      FDatabase.Connection;
+    LQuery.Connection := FDatabase.Connection;
 
     LQuery.SQL.Text :=
       'SELECT ' +
@@ -148,36 +150,26 @@ begin
       'FROM CLIENTE ' +
       'WHERE ID = :ID';
 
-    LQuery.ParamByName('ID').AsInteger :=
-      AId;
+    LQuery.ParamByName('ID').AsInteger := AId;
 
     LQuery.Open;
 
     if LQuery.IsEmpty then
       Exit;
 
-    Result := TCliente.Create;
+    Result          := TCliente.Create;
 
-    Result.Id :=
-      LQuery.FieldByName('ID').AsInteger;
-
-    Result.Name :=
-      LQuery.FieldByName('NAME').AsString;
-
-    Result.Document :=
-      LQuery.FieldByName('DOCUMENT').AsString;
-
-    Result.Email :=
-      LQuery.FieldByName('EMAIL').AsString;
-
-    Result.Active :=
-      LQuery.FieldByName('ACTIVE').AsBoolean;
+    Result.Id       := LQuery.FieldByName('ID').AsInteger;
+    Result.Name     := LQuery.FieldByName('NAME').AsString;
+    Result.Document := LQuery.FieldByName('DOCUMENT').AsString;
+    Result.Email    := LQuery.FieldByName('EMAIL').AsString;
+    Result.Active   := LQuery.FieldByName('ACTIVE').AsBoolean;
 
   finally
     LQuery.Free;
   end;
 end;
-
+                                   // POST
 function TFireDACClienteRepository.Add(
   ACliente: TCliente
 ): TCliente;
@@ -242,8 +234,7 @@ begin
   LQuery := TFDQuery.Create(nil);
 
   try
-    LQuery.Connection :=
-      FDatabase.Connection;
+    LQuery.Connection := FDatabase.Connection;
 
     LQuery.SQL.Text :=
       'SELECT FIRST 1 ID ' +
@@ -254,11 +245,138 @@ begin
 
     LQuery.Open;
 
-    Result :=
-      not LQuery.IsEmpty;
+    Result := not LQuery.IsEmpty;
 
   finally
     LQuery.Free;
+  end;
+end;
+
+function TFireDACClienteRepository.ExistsByDocumentExceptId(
+  const ADocument: string;
+  AId: Integer
+): Boolean;
+var
+  LQuery: TFDQuery;
+begin
+  Result := False;
+
+  LQuery := TFDQuery.Create(nil);
+
+  try
+
+    LQuery.Connection := FDatabase.Connection;
+
+    LQuery.SQL.Text :=
+      'SELECT FIRST 1 ID ' +
+      'FROM CLIENTE ' +
+      'WHERE DOCUMENT = :DOCUMENT ' +
+      'AND ID <> :ID';
+
+    LQuery.ParamByName('DOCUMENT').AsString := Trim(ADocument);
+    LQuery.ParamByName('ID').AsInteger      := AId;
+    LQuery.Open;
+
+    Result := not LQuery.IsEmpty;
+
+  finally
+
+    LQuery.Free;
+
+  end;
+end;
+                                   // PUT
+function TFireDACClienteRepository.Update(
+  ACliente: TCliente
+): TCliente;
+var
+  LQuery: TFDQuery;
+begin
+  LQuery := TFDQuery.Create(nil);
+
+  try
+
+    LQuery.Connection := FDatabase.Connection;
+    FDatabase.Connection.StartTransaction;
+
+    try
+
+      LQuery.SQL.Text :=
+        'UPDATE CLIENTE SET ' +
+        '  NAME = :NAME, ' +
+        '  DOCUMENT = :DOCUMENT, ' +
+        '  EMAIL = :EMAIL, ' +
+        '  ACTIVE = :ACTIVE ' +
+        'WHERE ID = :ID';
+
+      LQuery.ParamByName('NAME').AsString     := ACliente.Name;
+      LQuery.ParamByName('DOCUMENT').AsString := ACliente.Document;
+      LQuery.ParamByName('EMAIL').AsString    := ACliente.Email;
+      LQuery.ParamByName('ACTIVE').AsBoolean  := ACliente.Active;
+      LQuery.ParamByName('ID').AsInteger      := ACliente.Id;
+      LQuery.ExecSQL;
+
+      FDatabase.Connection.Commit;
+
+      Result := ACliente;
+
+    except
+
+      if FDatabase.Connection.InTransaction then
+        FDatabase.Connection.Rollback;
+
+      raise;
+
+    end;
+
+  finally
+
+    LQuery.Free;
+
+  end;
+end;
+                                     // DELETE
+procedure TFireDACClienteRepository.Deactivate(
+  AId: Integer
+);
+var
+  LQuery: TFDQuery;
+begin
+  LQuery := TFDQuery.Create(nil);
+
+  try
+
+    LQuery.Connection := FDatabase.Connection;
+
+    FDatabase.Connection.StartTransaction;
+
+    try
+
+      LQuery.SQL.Text :=
+        'UPDATE CLIENTE ' +
+        'SET ACTIVE = :ACTIVE ' +
+        'WHERE ID = :ID';
+
+      LQuery.ParamByName('ACTIVE').AsBoolean := False;
+      LQuery.ParamByName('ID').AsInteger     := AId;
+
+      LQuery.ExecSQL;
+
+      FDatabase.Connection.Commit;
+
+    except
+
+      if FDatabase.Connection.InTransaction then
+        FDatabase.Connection.Rollback;
+
+      raise;
+
+    end;
+
+  finally
+
+    LQuery.Free;
+
   end;
 end;
 

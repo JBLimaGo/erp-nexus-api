@@ -1,6 +1,21 @@
-{
+﻿{
    Criacao
    HTTP + JSON
+
+   CRUD CLIENTES
+
+CREATE
+POST /clientes                 ✅
+
+READ
+GET /clientes                  ✅
+GET /clientes/:id              ✅
+
+UPDATE
+PUT /clientes/:id              ✅
+
+DELETE / SOFT DELETE
+DELETE /clientes/:id           ✅
 
 }
 
@@ -27,6 +42,16 @@ type
     class procedure CreateCliente(    // POST novo registro
       Req: THorseRequest;
       Res: THorseResponse
+    );
+
+    class procedure Update(           // PUT em Registro no Banco de Dados
+      Req: THorseRequest;
+      Res: THorseResponse
+    );
+
+    class procedure Deactivate(       // DELETE um registro, mais ira inativar pois futuramente
+      Req: THorseRequest;             // esse cliente pode ter vendas, notas, pedidos, relacionados a esse cliente
+      Res: THorseResponse             // com isso não podemos perder o historico desse cliente.
     );
 
   end;
@@ -60,52 +85,27 @@ begin
   LArray := nil;
 
   try
-    LService :=
-      TAppContainer.CreateClienteService;
-
-    LClientes :=
-      LService.ListClientes;
-
-    LArray := TJSONArray.Create;
+    LService  := TAppContainer.CreateClienteService;
+    LClientes := LService.ListClientes;
+    LArray    := TJSONArray.Create;
 
     for LCliente in LClientes do
     begin
       LJSON := TJSONObject.Create;
 
-      LJSON.AddPair(
-        'id',
-        TJSONNumber.Create(LCliente.Id)
-      );
-
-      LJSON.AddPair(
-        'name',
-        LCliente.Name
-      );
-
-      LJSON.AddPair(
-        'document',
-        LCliente.Document
-      );
-
-      LJSON.AddPair(
-        'email',
-        LCliente.Email
-      );
-
-      LJSON.AddPair(
-        'active',
-        TJSONBool.Create(
-          LCliente.Active
-        )
+      LJSON.AddPair('id',TJSONNumber.Create(LCliente.Id));
+      LJSON.AddPair('name',LCliente.Name);
+      LJSON.AddPair('document',LCliente.Document);
+      LJSON.AddPair('email',LCliente.Email);
+      LJSON.AddPair('active',TJSONBool.Create(LCliente.Active)
       );
 
       LArray.AddElement(LJSON);
     end;
 
-    Res
-      .Status(200)
-      .ContentType('application/json')
-      .Send(LArray.ToJSON);
+    Res.Status(200)
+       .ContentType('application/json')
+       .Send(LArray.ToJSON);
 
   finally
     LArray.Free;
@@ -125,17 +125,13 @@ var
   LCliente: TCliente;
   LJSON: TJSONObject;
 begin
-  if not TryStrToInt(
-    Req.Params['id'],
-    LId
-  ) then
+  if not TryStrToInt(Req.Params['id'],LId) then
   begin
-    Res
-      .Status(400)
-      .ContentType('application/json')
-      .Send(
+    Res.Status(400)
+       .ContentType('application/json')
+       .Send(
         '{"error":"INVALID_CLIENTE_ID",' +
-        '"message":"O ID do cliente deve ser um n�mero inteiro v�lido."}'
+        '"message":"O ID do cliente deve ser um número inteiro válido."}'
       );
 
     Exit;
@@ -146,20 +142,16 @@ begin
   LJSON := nil;
 
   try
-    LService :=
-      TAppContainer.CreateClienteService;
-
-    LCliente :=
-      LService.FindClienteById(LId);
+    LService := TAppContainer.CreateClienteService;
+    LCliente := LService.FindClienteById(LId);
 
     if not Assigned(LCliente) then
     begin
-      Res
-        .Status(404)
-        .ContentType('application/json')
-        .Send(
+      Res.Status(404)
+         .ContentType('application/json')
+         .Send(
           '{"error":"CLIENTE_NOT_FOUND",' +
-          '"message":"Cliente n�o encontrado"}'
+          '"message":"Cliente não encontrado"}'
         );
 
       Exit;
@@ -167,37 +159,16 @@ begin
 
     LJSON := TJSONObject.Create;
 
-    LJSON.AddPair(
-      'id',
-      TJSONNumber.Create(LCliente.Id)
+    LJSON.AddPair('id',TJSONNumber.Create(LCliente.Id));
+    LJSON.AddPair('name',LCliente.Name);
+    LJSON.AddPair('document',LCliente.Document);
+    LJSON.AddPair('email',LCliente.Email);
+    LJSON.AddPair('active',TJSONBool.Create(LCliente.Active)
     );
 
-    LJSON.AddPair(
-      'name',
-      LCliente.Name
-    );
-
-    LJSON.AddPair(
-      'document',
-      LCliente.Document
-    );
-
-    LJSON.AddPair(
-      'email',
-      LCliente.Email
-    );
-
-    LJSON.AddPair(
-      'active',
-      TJSONBool.Create(
-        LCliente.Active
-      )
-    );
-
-    Res
-      .Status(200)
-      .ContentType('application/json')
-      .Send(LJSON.ToJSON);
+    Res.Status(200)
+       .ContentType('application/json')
+       .Send(LJSON.ToJSON);
 
   finally
     LJSON.Free;
@@ -225,9 +196,7 @@ begin
   LService  := nil;
 
   try
-    LBody := TJSONObject.ParseJSONValue(
-      Req.Body
-    ) as TJSONObject;
+    LBody := TJSONObject.ParseJSONValue(Req.Body) as TJSONObject;
 
     if not Assigned(LBody) then
     begin
@@ -236,7 +205,7 @@ begin
         .ContentType('application/json')
         .Send(
           '{"error":"INVALID_JSON",' +
-          '"message":"O corpo da requisi��o deve conter um JSON v�lido."}'
+          '"message":"O corpo da requisição deve conter um JSON válido."}'
         );
 
       Exit;
@@ -250,9 +219,8 @@ begin
     LDTO.Active   := LBody.GetValue<Boolean>('active',True);
 
     LService  := TAppContainer.CreateClienteService;
-    LCliente := LService.CreateCliente(LDTO);
-
-    LResponse := TJSONObject.Create;
+    LCliente  := LService.CreateCliente(LDTO);
+    LResponse := TJSONObject.Create;
 
     LResponse.AddPair('id', TJSONNumber.Create(LCliente.Id));
     LResponse.AddPair('name', LCliente.Name);
@@ -274,5 +242,85 @@ begin
   end;
 end;
 
+         // Realiza o PUT no registro update e alteração do registro
+class procedure TClienteController.Update(
+  Req: THorseRequest;
+  Res: THorseResponse
+);
+var
+  LId: Integer;
+  LDTO: TUpdateClienteDTO;
+  LCliente: TCliente;
+  LService: TClienteService;
+  LResponse: TJSONObject;
+begin
+  LDTO := nil;
+  LCliente := nil;
+  LService := nil;
+  LResponse := nil;
+
+  if not TryStrToInt(Req.Params['id'], LId) then
+    raise EValidationException.Create(
+      'ID do cliente inválido'
+    );
+
+  LDTO := TUpdateClienteDTO.FromJSON(Req.Body);
+
+  try
+    LService := TAppContainer.CreateClienteService;
+    LCliente := LService.UpdateCliente(LId, LDTO);
+    LResponse := TJSONObject.Create;
+
+    LResponse.AddPair('id',TJSONNumber.Create(LCliente.Id));
+    LResponse.AddPair('name',LCliente.Name);
+    LResponse.AddPair('document',LCliente.Document);
+    LResponse.AddPair('email',LCliente.Email);
+    LResponse.AddPair('active',TJSONBool.Create(LCliente.Active));
+
+    Res.Status(200)
+       .ContentType('application/json')
+       .Send(LResponse.ToJSON);
+
+  finally
+    LResponse.Free;
+    LCliente.Free;
+    LService.Free;
+    LDTO.Free;
+  end;
+end;
+
+       { DELETE - Realiza a desativação do registro cliente pois um cliente pode
+                  ter registros relacionados a ele e com isso não podemos perder o
+                  historico desse cliente.
+       }
+class procedure TClienteController.Deactivate(
+  Req: THorseRequest;
+  Res: THorseResponse
+);
+var
+  LId: Integer;
+  LService: TClienteService;
+begin
+
+  if not TryStrToInt(Req.Params['id'],LId) then
+    raise EValidationException.Create(
+      'ID do cliente inválido'
+    );
+
+  LService := TAppContainer.CreateClienteService;
+
+  try
+
+    LService.DeactivateCliente(LId);
+
+    Res.Status(204);
+
+  finally
+
+    LService.Free;
+
+  end;
+
+end;
 
 end.

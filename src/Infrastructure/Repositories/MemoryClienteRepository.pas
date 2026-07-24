@@ -30,9 +30,23 @@ type
       const ADocument: string
     ): Boolean;
 
+    function ExistsByDocumentExceptId(
+      const ADocument: string;
+      AId: Integer
+    ): Boolean;
+
     function Add(
       ACliente: TCliente
     ): TCliente;
+
+    function Update(
+      ACliente: TCliente
+    ): TCliente;
+
+    procedure Deactivate(
+      AId: Integer
+    );
+
   end;
 
 implementation
@@ -56,21 +70,21 @@ begin
 
   FClientes := TObjectList<TCliente>.Create(True);
 
-  LCliente := TCliente.Create;
-  LCliente.Id := 1;
-  LCliente.Name := 'Empresa Alpha Ltda';
+  LCliente          := TCliente.Create;
+  LCliente.Id       := 1;
+  LCliente.Name     := 'Empresa Alpha Ltda';
   LCliente.Document := '12345678000190';
-  LCliente.Email := 'contato@empresaalpha.com.br';
-  LCliente.Active := True;
+  LCliente.Email    := 'contato@empresaalpha.com.br';
+  LCliente.Active   := True;
 
   FClientes.Add(LCliente);
 
-  LCliente := TCliente.Create;
-  LCliente.Id := 2;
-  LCliente.Name := 'Comercial Beta Ltda';
+  LCliente          := TCliente.Create;
+  LCliente.Id       := 2;
+  LCliente.Name     := 'Comercial Beta Ltda';
   LCliente.Document := '98765432000110';
-  LCliente.Email := 'contato@comercialbeta.com.br';
-  LCliente.Active := True;
+  LCliente.Email    := 'contato@comercialbeta.com.br';
+  LCliente.Active   := True;
 
   FClientes.Add(LCliente);
 
@@ -86,17 +100,17 @@ begin
   Result := TObjectList<TCliente>.Create(True);
 
   for LCliente in FClientes do
-  begin
-    LCopy := TCliente.Create;
+    begin
+      LCopy          := TCliente.Create;
 
-    LCopy.Id := LCliente.Id;
-    LCopy.Name := LCliente.Name;
-    LCopy.Document := LCliente.Document;
-    LCopy.Email := LCliente.Email;
-    LCopy.Active := LCliente.Active;
+      LCopy.Id       := LCliente.Id;
+      LCopy.Name     := LCliente.Name;
+      LCopy.Document := LCliente.Document;
+      LCopy.Email    := LCliente.Email;
+      LCopy.Active   := LCliente.Active;
 
-    Result.Add(LCopy);
-  end;
+      Result.Add(LCopy);
+    end;
 end;
 
 function TMemoryClienteRepository.FindById(
@@ -108,20 +122,20 @@ begin
   Result := nil;
 
   for LCliente in FClientes do
-  begin
-    if LCliente.Id = AId then
     begin
-      Result := TCliente.Create;
+      if LCliente.Id = AId then
+        begin
+          Result          := TCliente.Create;
 
-      Result.Id := LCliente.Id;
-      Result.Name := LCliente.Name;
-      Result.Document := LCliente.Document;
-      Result.Email := LCliente.Email;
-      Result.Active := LCliente.Active;
+          Result.Id       := LCliente.Id;
+          Result.Name     := LCliente.Name;
+          Result.Document := LCliente.Document;
+          Result.Email    := LCliente.Email;
+          Result.Active   := LCliente.Active;
 
-      Exit;
+          Exit;
+        end;
     end;
-  end;
 end;
 
 function TMemoryClienteRepository.Add(
@@ -133,13 +147,13 @@ begin
   ACliente.Id := FNextId;
   Inc(FNextId);
 
-  LStoredCliente := TCliente.Create;
+  LStoredCliente          := TCliente.Create;
 
-  LStoredCliente.Id := ACliente.Id;
-  LStoredCliente.Name := ACliente.Name;
+  LStoredCliente.Id       := ACliente.Id;
+  LStoredCliente.Name     := ACliente.Name;
   LStoredCliente.Document := ACliente.Document;
-  LStoredCliente.Email := ACliente.Email;
-  LStoredCliente.Active := ACliente.Active;
+  LStoredCliente.Email    := ACliente.Email;
+  LStoredCliente.Active   := ACliente.Active;
 
   FClientes.Add(LStoredCliente);
 
@@ -155,16 +169,73 @@ begin
   Result := False;
 
   for LCliente in FClientes do
-  begin
-    if SameText(
-      Trim(LCliente.Document),
-      Trim(ADocument)
-    ) then
     begin
-      Result := True;
-      Exit;
+      if SameText(Trim(LCliente.Document),Trim(ADocument)) then
+        begin
+          Result := True;
+          Exit;
+        end;
     end;
-  end;
+end;
+
+function TMemoryClienteRepository.ExistsByDocumentExceptId(
+  const ADocument: string;
+  AId: Integer
+): Boolean;
+var
+  LCliente: TCliente;
+begin
+  Result := False;
+
+  for LCliente in FClientes do
+    begin
+      if (LCliente.Id <> AId) and SameText(Trim(LCliente.Document), Trim(ADocument)) then
+        begin
+          Result := True;
+          Exit;
+        end;
+    end;
+end;
+
+function TMemoryClienteRepository.Update(
+  ACliente: TCliente
+): TCliente;
+var
+  LCliente: TCliente;
+begin
+  Result := nil;
+
+  for LCliente in FClientes do
+    begin
+      if LCliente.Id = ACliente.Id then
+        begin
+
+          LCliente.Name     := ACliente.Name;
+          LCliente.Document := ACliente.Document;
+          LCliente.Email    := ACliente.Email;
+          LCliente.Active   := ACliente.Active;
+
+          Result := LCliente;
+
+          Exit;
+        end;
+    end;
+end;
+
+procedure TMemoryClienteRepository.Deactivate(
+  AId: Integer
+);
+var
+  LCliente: TCliente;
+begin
+  for LCliente in FClientes do
+    begin
+      if LCliente.Id = AId then
+        begin
+          LCliente.Active := False;
+          Exit;
+        end;
+    end;
 end;
 
 end.

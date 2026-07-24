@@ -25,9 +25,25 @@ type
       const ADocument: string
     ): Boolean;
 
+    function ExistsByDocumentExceptId(
+      const ADocument: string;
+      AId: Integer
+    ): Boolean;
+
     function Add(
       ACliente: TCliente
     ): TCliente;
+
+
+    function Update(
+      ACliente: TCliente
+    ): TCliente;
+
+    procedure Deactivate(
+      AId: Integer
+    );
+
+
   end;
 
 implementation

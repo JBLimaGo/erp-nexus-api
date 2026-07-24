@@ -18,6 +18,7 @@ uses
 
 procedure RegisterClienteRoutes;
 begin
+
   THorse.Get(
     '/api/v1/clientes',
     procedure(
@@ -29,7 +30,7 @@ begin
     end
   );
 
-   THorse.Get(
+  THorse.Get(
     '/api/v1/clientes/:id',
     procedure(
       Req: THorseRequest;
@@ -47,11 +48,18 @@ begin
       Res: THorseResponse
     )
     begin
-      TClienteController.CreateCliente(
-        Req,
-        Res
-      );
+      TClienteController.CreateCliente(Req,Res);
     end
+  );
+
+  THorse.Put(
+    '/api/v1/clientes/:id',
+    TClienteController.Update
+  );
+
+  THorse.Delete(
+    '/api/v1/clientes/:id',
+    TClienteController.Deactivate
   );
 
 end;

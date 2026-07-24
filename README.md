@@ -70,31 +70,57 @@ Tratam comportamentos transversais, como exceções e respostas HTTP de erro.
 - API REST utilizando Horse
 - Health Check
 - Versionamento de endpoints
-- Cadastro de clientes
-- Listagem de clientes
-- Consulta de cliente por ID
 - Persistência real com Firebird
 - Integração com FireDAC
 - Repository Pattern
 - DTOs
 - Service Layer
 - Injeção por interfaces
-- Transações
-- Validação de duplicidade
 - Middleware global de exceções
 - Respostas HTTP padronizadas
 - Tratamento HTTP 400, 404, 409 e 500
 - Configuração do banco através de variáveis de ambiente
 
+### Clientes
+
+A API possui um CRUD REST completo para gerenciamento de clientes:
+
+- Criação de clientes
+- Listagem de clientes
+- Consulta por ID
+- Atualização de dados
+- Inativação lógica (Soft Delete)
+- Reativação de clientes
+- Validação de documento duplicado
+- Tratamento de conflitos
+- Persistência com Firebird
+- Transações com Commit e Rollback
+
+### Regras de negócio
+
+- O documento do cliente deve ser único.
+- A unicidade também considera clientes inativos.
+- Clientes não são excluídos fisicamente.
+- O endpoint DELETE realiza Soft Delete através do campo `ACTIVE`.
+- Operações DELETE são idempotentes.
+- Clientes inativos podem ser reativados através de atualização.
+- Um cliente não pode assumir o documento pertencente a outro cadastro.
+
 ## 🌐 Endpoints
 
 | Método | Endpoint | Descrição |
-| --- | --- | --- |
-| GET | `/` | Informações da API |
-| GET | `/health` | Health Check |
-| GET | `/api/v1/clientes` | Lista os clientes |
-| GET | `/api/v1/clientes/:id` | Consulta um cliente |
-| POST | `/api/v1/clientes` | Cadastra um cliente |
+|---|---|---|
+| GET | `/health` | Verifica se a API está disponível |
+
+### Clientes
+
+| Método | Endpoint | Descrição | Status principal |
+|---|---|---|---|
+| GET | `/api/v1/clientes` | Lista clientes | 200 |
+| GET | `/api/v1/clientes/:id` | Consulta cliente por ID | 200 |
+| POST | `/api/v1/clientes` | Cria um cliente | 201 |
+| PUT | `/api/v1/clientes/:id` | Atualiza ou reativa um cliente | 200 |
+| DELETE | `/api/v1/clientes/:id` | Inativa um cliente (Soft Delete) | 204 |
 
 ## 📦 Exemplo
 
@@ -102,14 +128,52 @@ Tratam comportamentos transversais, como exceções e respostas HTTP de erro.
 
 POST `/api/v1/clientes`
 
-Body:
-
+```json
 {
   "name": "Empresa Exemplo Ltda",
   "document": "12345678000190",
   "email": "contato@exemplo.com.br",
   "active": true
 }
+```
+Resposta: 201 Created
+
+## ✏️ Atualização de cliente
+
+PUT `/api/v1/clientes/1`
+
+```json
+{
+  "name": "Empresa Alpha Atualizada Ltda",
+  "document": "12345678000190",
+  "email": "novoemail@empresa.com.br",
+  "active": true
+}
+```
+
+Resposta: 200 OK
+
+
+## 🗑️ Soft Delete
+
+A exclusão de clientes utiliza inativação lógica.
+
+DELETE `/api/v1/clientes/1`
+
+Resposta: 204 No Content
+
+## 🌐 Status HTTP utilizados
+
+| Status | Significado |
+|---|---|
+| 200 | Operação realizada com sucesso |
+| 201 | Recurso criado |
+| 204 | Operação realizada sem conteúdo de resposta |
+| 400 | Dados ou parâmetros inválidos |
+| 404 | Recurso não encontrado |
+| 409 | Conflito de regra de negócio |
+| 500 | Erro interno inesperado |
+
 
 ## ⚠️ Tratamento de erros
 
@@ -132,29 +196,33 @@ ERP_NEXUS_DB_PASSWORD
 
 Credenciais e arquivos físicos do banco não são versionados.
 
-## 🗺 Roadmap
+## 🗺️ Roadmap
 
-- [x] Estrutura inicial com Horse
+### Concluído
+
+- [x] Estrutura inicial da API com Horse
 - [x] Health Check
 - [x] Arquitetura em camadas
-- [x] Módulo de clientes
 - [x] FireDAC + Firebird
+- [x] Variáveis de ambiente
 - [x] Repository Pattern
-- [x] Persistência
-- [x] Transações
 - [x] Middleware global de exceções
+- [x] CRUD REST de Clientes
+- [x] Validações de negócio
+- [x] Soft Delete
+- [x] Reativação de clientes
+- [x] Transações com Commit/Rollback
 
-Próximas etapas:
+### Próximas evoluções
 
-- [ ] PUT para atualização
-- [ ] DELETE / inativação
-- [ ] Validação de CPF/CNPJ
-- [ ] Validação de e-mail
+- [ ] Paginação
+- [ ] Filtros e pesquisa
 - [ ] Swagger / OpenAPI
 - [ ] Testes automatizados
-- [ ] Autenticação e autorização
-- [ ] Logging estruturado
-- [ ] Novos módulos ERP
+- [ ] Autenticação JWT
+- [ ] Logs estruturados
+- [ ] Docker
+- [ ] CI/CD
 
 ## 📚 Status
 
