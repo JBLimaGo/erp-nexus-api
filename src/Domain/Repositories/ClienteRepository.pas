@@ -9,13 +9,22 @@ interface
 
 uses
   System.Generics.Collections,
-  Cliente;
+  Cliente,
+  ClienteFilter;
 
 type
   IClienteRepository = interface
     ['{C1526807-4A62-4C55-9557-A7C27E97AA01}']
 
     function FindAll: TObjectList<TCliente>;
+
+    function FindAllPaged(
+      AFilter: TClienteFilter
+    ): TObjectList<TCliente>;
+
+    function Count(
+      AFilter: TClienteFilter
+    ): Integer;
 
     function FindById(
       AId: Integer

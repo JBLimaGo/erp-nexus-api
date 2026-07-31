@@ -198,6 +198,17 @@ Credenciais e arquivos físicos do banco não são versionados.
 
 ## 🗺️ Roadmap
 
+## 🚀 Versão
+
+### v0.2.0
+
+Novidades:
+
+- Paginação
+- Filtros
+- Melhorias na Controller
+- Validação dos parâmetros
+
 ### Concluído
 
 - [x] Estrutura inicial da API com Horse
@@ -212,11 +223,11 @@ Credenciais e arquivos físicos do banco não são versionados.
 - [x] Soft Delete
 - [x] Reativação de clientes
 - [x] Transações com Commit/Rollback
+- [x] Paginação
+- [x] Filtros e pesquisa
 
 ### Próximas evoluções
 
-- [ ] Paginação
-- [ ] Filtros e pesquisa
 - [ ] Swagger / OpenAPI
 - [ ] Testes automatizados
 - [ ] Autenticação JWT

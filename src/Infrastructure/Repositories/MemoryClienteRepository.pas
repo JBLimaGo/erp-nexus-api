@@ -5,7 +5,8 @@ interface
 uses
   System.Generics.Collections,
   Cliente,
-  ClienteRepository;
+  ClienteRepository,
+  ClienteFilter;
 
 type
   TMemoryClienteRepository = class(
@@ -20,11 +21,20 @@ type
   public
     constructor Create;
 
-    function FindAll: TObjectList<TCliente>;
+    function FindAll:
+     TObjectList<TCliente>;
 
     function FindById(
       AId: Integer
     ): TCliente;
+
+    function FindAllPaged(
+      AFilter: TClienteFilter
+    ): TObjectList<TCliente>;
+
+     function Count(
+      AFilter: TClienteFilter
+    ): Integer;
 
     function ExistsByDocument(
       const ADocument: string
@@ -89,28 +99,6 @@ begin
   FClientes.Add(LCliente);
 
   FNextId := 3;
-end;
-
-function TMemoryClienteRepository.FindAll:
-  TObjectList<TCliente>;
-var
-  LCliente: TCliente;
-  LCopy: TCliente;
-begin
-  Result := TObjectList<TCliente>.Create(True);
-
-  for LCliente in FClientes do
-    begin
-      LCopy          := TCliente.Create;
-
-      LCopy.Id       := LCliente.Id;
-      LCopy.Name     := LCliente.Name;
-      LCopy.Document := LCliente.Document;
-      LCopy.Email    := LCliente.Email;
-      LCopy.Active   := LCliente.Active;
-
-      Result.Add(LCopy);
-    end;
 end;
 
 function TMemoryClienteRepository.FindById(
@@ -236,6 +224,42 @@ begin
           Exit;
         end;
     end;
+end;
+
+function TMemoryClienteRepository.FindAll: TObjectList<TCliente>;
+var
+  LCliente: TCliente;
+  LCopy: TCliente;
+begin
+  Result := TObjectList<TCliente>.Create(True);
+
+  for LCliente in FClientes do
+  begin
+    LCopy := TCliente.Create;
+
+    LCopy.Id       := LCliente.Id;
+    LCopy.Name     := LCliente.Name;
+    LCopy.Document := LCliente.Document;
+    LCopy.Email    := LCliente.Email;
+    LCopy.Active   := LCliente.Active;
+
+    Result.Add(LCopy);
+  end;
+end;
+
+function TMemoryClienteRepository.FindAllPaged(
+  AFilter: TClienteFilter
+): TObjectList<TCliente>;
+begin
+  // Temporariamente reutiliza o método existente.
+  Result := FindAll;
+end;
+
+function TMemoryClienteRepository.Count(
+  AFilter: TClienteFilter
+): Integer;
+begin
+  Result := FClientes.Count;
 end;
 
 end.

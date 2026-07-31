@@ -21,7 +21,8 @@ uses
   DatabaseConnection in 'Infrastructure\Database\DatabaseConnection.pas',
   FireDACClienteRepository in 'Infrastructure\Repositories\FireDACClienteRepository.pas',
   DomainExceptions in 'Domain\Exceptions\DomainExceptions.pas',
-  ExceptionMiddleware in 'Api\Middlewares\ExceptionMiddleware.pas';
+  ExceptionMiddleware in 'Api\Middlewares\ExceptionMiddleware.pas',
+  ClienteFilter in 'Domain\Models\ClienteFilter.pas';
 
 begin
 

@@ -24,7 +24,10 @@ unit ClienteController;
 interface
 
 uses
-  Horse;
+  Horse,
+  Cliente,
+  ClienteFilter,
+  System.JSON;
 
 type
   TClienteController = class
@@ -54,19 +57,54 @@ type
       Res: THorseResponse             // com isso não podemos perder o historico desse cliente.
     );
 
+    class function ClienteToJSON(
+      ACliente: TCliente
+    ): TJSONObject;
+
+    class function CreateFilter(
+      Req: THorseRequest
+    ): TClienteFilter;
+
+    class function ReadInteger(
+      const AValue: string;
+      const ADefault: Integer;
+      const AErrorMessage: string
+    ): Integer;
+
   end;
 
 implementation
 
 uses
   System.SysUtils,
-  System.JSON,
-  Cliente,
   ClienteDTO,
   ClienteService,
   System.Generics.Collections,
   AppContainer,
   DomainExceptions;
+
+const
+  DEFAULT_PAGE = 1;
+  DEFAULT_PAGE_SIZE = 20;
+  MAX_PAGE_SIZE = 100;
+
+  MSG_INVALID_PAGE =
+    'O parâmetro page deve ser um número inteiro.';
+
+  MSG_INVALID_PAGE_SIZE =
+    'O parâmetro pageSize deve ser um número inteiro.';
+
+class function TClienteController.ClienteToJSON(
+  ACliente: TCliente): TJSONObject;
+begin
+  Result := TJSONObject.Create;
+
+  Result.AddPair('id', TJSONNumber.Create(ACliente.Id));
+  Result.AddPair('name', ACliente.Name);
+  Result.AddPair('document', ACliente.Document);
+  Result.AddPair('email', ACliente.Email);
+  Result.AddPair('active', TJSONBool.Create(ACliente.Active));
+end;
 
                // Lista Todos do Array
 class procedure TClienteController.List(
@@ -76,30 +114,32 @@ class procedure TClienteController.List(
 var
   LService: TClienteService;
   LClientes: TObjectList<TCliente>;
+  LFilter: TClienteFilter;
   LCliente: TCliente;
   LArray: TJSONArray;
   LJSON: TJSONObject;
 begin
   LService := nil;
   LClientes := nil;
+  LFilter := nil;
   LArray := nil;
 
   try
-    LService  := TAppContainer.CreateClienteService;
-    LClientes := LService.ListClientes;
-    LArray    := TJSONArray.Create;
+    { Cria o filtro }
+    LFilter := CreateFilter(Req);
+
+    { Cria o Service }
+    LService := TAppContainer.CreateClienteService;
+
+    { Busca os clientes }
+    LClientes := LService.ListClientes(LFilter);
+
+    { Cria o JSON }
+    LArray := TJSONArray.Create;
 
     for LCliente in LClientes do
     begin
-      LJSON := TJSONObject.Create;
-
-      LJSON.AddPair('id',TJSONNumber.Create(LCliente.Id));
-      LJSON.AddPair('name',LCliente.Name);
-      LJSON.AddPair('document',LCliente.Document);
-      LJSON.AddPair('email',LCliente.Email);
-      LJSON.AddPair('active',TJSONBool.Create(LCliente.Active)
-      );
-
+      LJSON := ClienteToJSON(LCliente);
       LArray.AddElement(LJSON);
     end;
 
@@ -110,6 +150,7 @@ begin
   finally
     LArray.Free;
     LClientes.Free;
+    LFilter.Free;
     LService.Free;
   end;
 end;
@@ -159,12 +200,14 @@ begin
 
     LJSON := TJSONObject.Create;
 
-    LJSON.AddPair('id',TJSONNumber.Create(LCliente.Id));
+   { LJSON.AddPair('id',TJSONNumber.Create(LCliente.Id));
     LJSON.AddPair('name',LCliente.Name);
     LJSON.AddPair('document',LCliente.Document);
     LJSON.AddPair('email',LCliente.Email);
     LJSON.AddPair('active',TJSONBool.Create(LCliente.Active)
-    );
+    );   }
+
+    LJSON := ClienteToJSON(LCliente);
 
     Res.Status(200)
        .ContentType('application/json')
@@ -218,20 +261,23 @@ begin
     LDTO.Email    := LBody.GetValue<string>('email','');
     LDTO.Active   := LBody.GetValue<Boolean>('active',True);
 
-    LService  := TAppContainer.CreateClienteService;
-    LCliente  := LService.CreateCliente(LDTO);
+   // LService  := TAppContainer.CreateClienteService;
+   // LCliente  := LService.CreateCliente(LDTO);
     LResponse := TJSONObject.Create;
+
+    {
 
     LResponse.AddPair('id', TJSONNumber.Create(LCliente.Id));
     LResponse.AddPair('name', LCliente.Name);
     LResponse.AddPair('document', LCliente.Document);
     LResponse.AddPair('email', LCliente.Email);
-    LResponse.AddPair('active', TJSONBool.Create(LCliente.Active));
+    LResponse.AddPair('active', TJSONBool.Create(LCliente.Active)); }
 
-    Res
-      .Status(201)
-      .ContentType('application/json')
-      .Send(LResponse.ToJSON);
+    LResponse := ClienteToJSON(LCliente);
+
+    Res.Status(201)
+       .ContentType('application/json')
+       .Send(LResponse.ToJSON);
 
   finally
     LResponse.Free;
@@ -242,7 +288,58 @@ begin
   end;
 end;
 
-         // Realiza o PUT no registro update e alteração do registro
+class function TClienteController.CreateFilter(
+  Req: THorseRequest
+): TClienteFilter;
+var
+  LPage: Integer;
+  LPageSize: Integer;
+begin
+  LPage := ReadInteger(
+    Req.Query.Field('page').AsString,
+    DEFAULT_PAGE,
+    MSG_INVALID_PAGE
+  );
+
+  if LPage < DEFAULT_PAGE then
+    LPage := DEFAULT_PAGE;
+
+  LPageSize := ReadInteger(
+    Req.Query.Field('pageSize').AsString,
+    DEFAULT_PAGE_SIZE,
+    MSG_INVALID_PAGE_SIZE
+  );
+
+  if LPageSize < 1 then
+    LPageSize := DEFAULT_PAGE_SIZE;
+
+  if LPageSize > MAX_PAGE_SIZE then
+    LPageSize := MAX_PAGE_SIZE;
+
+  Result := TClienteFilter.Create;
+  Result.Page := LPage;
+  Result.PageSize := LPageSize;
+  Result.Name := Req.Query.Field('name').AsString;
+  Result.Document := Req.Query.Field('document').AsString;
+
+  if Req.Query.ContainsKey('active') then
+    Result.Active := Req.Query.Field('active').AsString;
+end;
+
+class function TClienteController.ReadInteger(
+  const AValue: string;
+  const ADefault: Integer;
+  const AErrorMessage: string
+): Integer;
+begin
+  if AValue.IsEmpty then
+    Exit(ADefault);
+
+  if not TryStrToInt(AValue, Result) then
+    raise EValidationException.Create(AErrorMessage);
+end;
+
+// Realiza o PUT no registro update e alteração do registro
 class procedure TClienteController.Update(
   Req: THorseRequest;
   Res: THorseResponse
@@ -271,11 +368,13 @@ begin
     LCliente := LService.UpdateCliente(LId, LDTO);
     LResponse := TJSONObject.Create;
 
-    LResponse.AddPair('id',TJSONNumber.Create(LCliente.Id));
+   { LResponse.AddPair('id',TJSONNumber.Create(LCliente.Id));
     LResponse.AddPair('name',LCliente.Name);
     LResponse.AddPair('document',LCliente.Document);
     LResponse.AddPair('email',LCliente.Email);
-    LResponse.AddPair('active',TJSONBool.Create(LCliente.Active));
+    LResponse.AddPair('active',TJSONBool.Create(LCliente.Active));   }
+
+    LResponse := ClienteToJSON(LCliente);
 
     Res.Status(200)
        .ContentType('application/json')

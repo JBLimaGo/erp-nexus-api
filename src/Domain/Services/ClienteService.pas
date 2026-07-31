@@ -14,7 +14,8 @@ uses
   System.Generics.Collections,
   Cliente,
   ClienteDTO,
-  ClienteRepository;
+  ClienteRepository,
+  ClienteFilter;
 
 type
   TClienteService = class
@@ -25,8 +26,9 @@ type
       ARepository: IClienteRepository
     );
 
-    function ListClientes:
-      TObjectList<TCliente>;
+    function ListClientes(
+      AFilter: TClienteFilter
+    ): TObjectList<TCliente>;
 
     function FindClienteById(      // GET
       AId: Integer
@@ -62,10 +64,17 @@ begin
   FRepository := ARepository;
 end;
 
-function TClienteService.ListClientes:
-  TObjectList<TCliente>;
+function TClienteService.ListClientes(
+  AFilter: TClienteFilter
+): TObjectList<TCliente>;
 begin
-  Result := FRepository.FindAll;
+  // O Service não acessa o banco diretamente.
+  // Ele delega essa responsabilidade ao Repository.
+
+  Result := FRepository.FindAllPaged(AFilter);
+
+  // O resultado recebido do Repository
+  // é devolvido para a Controller.
 end;
 
 function TClienteService.FindClienteById(
