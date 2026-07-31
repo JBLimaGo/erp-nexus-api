@@ -261,17 +261,17 @@ begin
     LDTO.Email    := LBody.GetValue<string>('email','');
     LDTO.Active   := LBody.GetValue<Boolean>('active',True);
 
-   // LService  := TAppContainer.CreateClienteService;
-   // LCliente  := LService.CreateCliente(LDTO);
+    LService  := TAppContainer.CreateClienteService;
+    LCliente  := LService.CreateCliente(LDTO);
     LResponse := TJSONObject.Create;
 
-    {
+
 
     LResponse.AddPair('id', TJSONNumber.Create(LCliente.Id));
     LResponse.AddPair('name', LCliente.Name);
     LResponse.AddPair('document', LCliente.Document);
     LResponse.AddPair('email', LCliente.Email);
-    LResponse.AddPair('active', TJSONBool.Create(LCliente.Active)); }
+    LResponse.AddPair('active', TJSONBool.Create(LCliente.Active));
 
     LResponse := ClienteToJSON(LCliente);
 
