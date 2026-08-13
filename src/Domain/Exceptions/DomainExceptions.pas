@@ -12,6 +12,8 @@ type
 
   EConflictException = class(Exception);
 
+  EUnauthorizedException = class(Exception);
+
 implementation
 
 end.

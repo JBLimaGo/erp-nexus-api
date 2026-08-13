@@ -7,6 +7,7 @@ program ERPNexusAPI;
 uses
   System.SysUtils,
   Horse,
+  Horse.GBSwagger,
   AppConfig in 'Config\AppConfig.pas',
   AppRoutes in 'Api\Routes\AppRoutes.pas',
   HealthRoutes in 'Api\Routes\HealthRoutes.pas',
@@ -22,9 +23,21 @@ uses
   FireDACClienteRepository in 'Infrastructure\Repositories\FireDACClienteRepository.pas',
   DomainExceptions in 'Domain\Exceptions\DomainExceptions.pas',
   ExceptionMiddleware in 'Api\Middlewares\ExceptionMiddleware.pas',
-  ClienteFilter in 'Domain\Models\ClienteFilter.pas';
+  ClienteFilter in 'Domain\Models\ClienteFilter.pas',
+  OpenApiRoutes in 'Api\Routes\OpenApiRoutes.pas',
+  Usuario in 'Domain\Models\Usuario.pas',
+  LoginDTO in 'Api\DTOs\LoginDTO.pas',
+  UsuarioRepository in 'Domain\Repositories\UsuarioRepository.pas',
+  MemoryUsuarioRepository in 'Infrastructure\Repositories\MemoryUsuarioRepository.pas',
+  AuthService in 'Domain\Services\AuthService.pas',
+  JwtService in 'Infrastructure\Security\JwtService.pas',
+  LoginResponseDTO in 'Api\DTOs\LoginResponseDTO.pas',
+  AuthController in 'Api\Controllers\AuthController.pas',
+  LoginRequestDTO in 'Api\DTOs\LoginRequestDTO.pas';
 
 begin
+
+  THorse.Use(HorseSwagger);
 
   RegisterExceptionMiddleware;
   RegisterRoutes;

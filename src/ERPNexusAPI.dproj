@@ -65,8 +65,10 @@
         <DCC_K>false</DCC_K>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
         <SanitizedProjectName>ERPNexusAPI</SanitizedProjectName>
-        <DCC_UnitSearchPath>D:\Programacao\Embarcadero\Projects\ERP-Nexus-API\modules\horse\src;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>D:\Programacao\Embarcadero\Projects\ERP-Nexus-API\modules\horse\src;D:\Programacao\Embarcadero\Projects\ERP-Nexus-API\modules\gbswagger\Source;D:\Programacao\Embarcadero\Projects\ERP-Nexus-API\modules\gbswagger\Source\Core;D:\Programacao\Embarcadero\Projects\ERP-Nexus-API\modules\gbswagger\Source\Horse;D:\Programacao\Embarcadero\Projects\ERP-Nexus-API\modules\gbswagger\Source\Validator;D:\Programacao\Embarcadero\Projects\ERP-Nexus-API\modules\gbswagger\Source\Datasnap;D:\Programacao\Embarcadero\Projects\ERP-Nexus-API\modules\delphi-jose-jwt\Source\Common;D:\Programacao\Embarcadero\Projects\ERP-Nexus-API\modules\delphi-jose-jwt\Source\JOSE;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <Debugger_IncludeSystemVars>true</Debugger_IncludeSystemVars>
+        <VerInfo_Locale>1046</VerInfo_Locale>
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Android)'!=''">
         <DCC_UsePackage>DBXSqliteDriver;tethering;FireDACDBXDriver;RESTBackendComponents;bindengine;CloudService;DataSnapClient;bindcompdbx;IndyIPServer;IndySystem;fmxFireDAC;FMXTee;soaprtl;DbxCommonDriver;xmlrtl;soapmidas;DataSnapNativeClient;rtl;DbxClientDriver;IndyIPClient;DataSnapProviderClient;RESTComponents;ZComponent;DBXInterBaseDriver;ZCore;emsclientfiredac;DataSnapFireDAC;bindcompfmx;FmxTeeUI;fmx;FireDACIBDriver;dbexpress;IndyCore;ZParseSql;dsnap;emsclient;DataSnapCommon;FireDACCommon;soapserver;FireDACCommonDriver;inet;IndyIPCommon;ZDbc;FireDAC;FireDACSqliteDriver;ibmonitor;ibxpress;ibxbindings;FireDACDSDriver;CustomIPTransport;bindcomp;ZPlain;dbxcds;dsnapxml;dbrtl;IndyProtocols;$(DCC_UsePackage)</DCC_UsePackage>
@@ -132,6 +134,7 @@
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_UnitSearchPath>..\modules\delphi-jose-jwt\Source;..\modules\delphi-jose-jwt\Source\Common;..\modules\delphi-jose-jwt\Source\JOSE;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -162,6 +165,16 @@
         <DCCReference Include="Domain\Exceptions\DomainExceptions.pas"/>
         <DCCReference Include="Api\Middlewares\ExceptionMiddleware.pas"/>
         <DCCReference Include="Domain\Models\ClienteFilter.pas"/>
+        <DCCReference Include="Api\Routes\OpenApiRoutes.pas"/>
+        <DCCReference Include="Domain\Models\Usuario.pas"/>
+        <DCCReference Include="Api\DTOs\LoginDTO.pas"/>
+        <DCCReference Include="Domain\Repositories\UsuarioRepository.pas"/>
+        <DCCReference Include="Infrastructure\Repositories\MemoryUsuarioRepository.pas"/>
+        <DCCReference Include="Domain\Services\AuthService.pas"/>
+        <DCCReference Include="Infrastructure\Security\JwtService.pas"/>
+        <DCCReference Include="Api\DTOs\LoginResponseDTO.pas"/>
+        <DCCReference Include="Api\Controllers\AuthController.pas"/>
+        <DCCReference Include="Api\DTOs\LoginRequestDTO.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -200,6 +213,12 @@
                 </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\iossimulator\libpcre.dylib" Class="DependencyModule">
                     <Platform Name="iOSSimulator">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\docs\openapi.json" Configuration="Debug" Class="File">
+                    <Platform Name="Win32">
+                        <RemoteName>openapi.json</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

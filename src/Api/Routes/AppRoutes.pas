@@ -10,7 +10,8 @@ uses
   Horse,
   AppConfig,
   HealthRoutes,
-  ClienteRoutes;
+  ClienteRoutes,
+  OpenApiRoutes;
 
 procedure RegisterRoutes;
 begin
@@ -23,6 +24,7 @@ begin
 
   RegisterHealthRoutes;
   RegisterClienteRoutes;
+  RegisterOpenApiRoutes;
 end;
 
 end.
